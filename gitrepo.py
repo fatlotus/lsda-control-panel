@@ -19,6 +19,9 @@ def fetch_commits(cnetid):
     
     # Transform the commits into a template-friendly object.
     for parent in parents:
+        if parent in shared_parents:
+            continue
+        
         path_to_check = "results/{}.ipynb".format(parent.hexsha)
         
         result.append({
