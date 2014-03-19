@@ -1,6 +1,6 @@
 import git
 
-repo = git.Repo("/home/git/repositories/assignment-one/.git")
+repo = git.Repo("/home/git/repositories/assignment-one.git")
 
 def fetch_commits(cnetid):
     """
