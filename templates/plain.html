@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Large Scale Data Analysis</title>
+  <style type="text/css">
+  table{border-collapse:collapse;margin-bottom:1em;}
+  td,th{border:1px solid #ccc;padding:0.3em;}
+  code{font:9pt Monaco,monospace;}
+  </style>
+  <script type="text/javascript">
+  /*
+   * This script is a bit of a hack: it converts standard <a> links
+   * into <form>'s, using JavaScript, to prevent side effects occuring as
+   * a result of a GET request. Generally this is pretty strange practice,
+   * but it's better to do this than to allow bots to cancel all jobs :)
+   */
+  document.addEventListener("DOMContentLoaded", function() {
+    var as = document.getElementsByTagName('a');
+    for (var i = 0, l = as.length, x; i < l, x = as[i]; i++) {
+      
+      /* Filter out off-site links. */
+      if (x.getAttribute("href")[0] != '/')
+        continue;
+      
+      x.onclick = function() {
+        /* We're using a standard HTML form here -- it's simple, and fairly
+         * effective. */
+        
+        var form = document.createElement('form');
+        form.action = this.href;
+        form.method = "POST";
+        form.submit();
+        return false;
+      };
+    }
+  });
+  </script>
+</head>
+<body>
+  {% if is_admin %}
+  <form method="get">
+    <select name="owner" onchange="window.location.href='?owner='+this.value;">
+      <option>blank</option>
+      {% for this_owner in owners %}
+      <option {% if this_owner == owner %}
+        selected="selected"{% endif %}>{{ this_owner }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  {% endif %}
+  <table>
+    <tr><th colspan="2">Running workers</th></tr>
+    <tr>
+      <th>Worker IP</th>
+      <th>State</th>
+    </tr>
+    {% for node in nodes %}
+    <tr>
+      <td>{{ node.ip_address }}</td>
+      <td>{{ node.states[-1] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <table>
+    <tr><th colspan="5">Recent jobs</th></tr>
+    <tr>
+      <th>SHA1</th>
+      <th>Commit Message</th>
+      <th>Task ID</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    {% for job in jobs %}
+    <tr>
+      <td><code>{{ job.sha1[:8] }}</code></td>
+      <td>{{ commits_index[job.sha1].message }}</td>
+      {% if job.status == "complete" %}
+      <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb"><code>{{ job.task_id }}</code></a></td>
+      {% else %}
+      <td><code>{{ job.task_id }}</code></td>
+      {% endif %}
+      <td>{{ job.status }}</td>
+      <td>{% if job.status == "enqueued" or job.status == "running" %}
+        <a href="/cancel?task_id={{ job.task_id }}">cancel</a>
+      {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <table>
+    <tr><th colspan="5">Recent commits</th></tr>
+    <tr>
+      <th>SHA1</th>
+      <th>Message</th>
+      <th>Committer</th>
+      <th>Actions</th>
+    </tr>
+    {% for commit in commits %}
+    <tr>
+      <td><code>{{ commit.hexsha[:8] }}</code></td>
+      <td>{{ commit.message }}</td>
+      <td><a href="mailto:{{ commit.committer_email }}">
+        {{ commit.committer }}</a></td>
+      <td><a href="/submit?sha1={{ commit.hexsha }}">submit</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

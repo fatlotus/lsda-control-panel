@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+h1 {
+  text-align:center;
+  font: 2em/3em Georgia,serif;
+}
+body {
+  width: 50em;
+  margin: 0 auto;
+  background-color: #fff;
+  font: 1em Helvetica,Arial,sans-serif;
+}
+#graph p {
+  width: 50px;
+  float: left;
+  height: 20px;
+  padding: 5px;
+}
+#graph em {
+  font:bold 1.5em Helvetica,Arial,sans-serif;
+  display:block;
+}
+#graph span {
+  color:#777;
+  font-size: 0.9em
+}
+#graph {
+  height: 50px;
+  width: 80%;
+  margin: 1em auto;
+}
+#commits blockquote {
+  padding:1em;
+  border-bottom: 1px dotted #ccc;
+}
+#commits p {
+  font: 1.5em Georgia, serif;
+}
