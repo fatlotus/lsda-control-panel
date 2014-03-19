@@ -13,14 +13,14 @@ DEFAULT_CONSTELLATION = ["controller", "engine", "engine", "engine"]
 
 # Set up the connection to AMQP.
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-  'localhost')) # , 'amqp.lsda.cs.uchicago.edu'))
+  'amqp.lsda.cs.uchicago.edu'))
 channel = connection.channel()
 
 channel.queue_declare("lsda_tasks", durable=True)
 
 # Set up the connection to ZooKeeper.
 zookeeper = KazooClient(
-  hosts = 'localhost' # 'zookeeper.lsda.cs.uchicago.edu'
+  hosts = 'zookeeper.lsda.cs.uchicago.edu'
 )
 
 zookeeper.start()
