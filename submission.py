@@ -94,7 +94,7 @@ def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
     """
     
     # Validate the incoming GIT SHA-1.
-    if not re.match(r'[a-f0-9]{}', git_sha1):
+    if not re.match(r'[a-f0-9]{40}', git_sha1):
         return
     
     # Create a new ID for this task.

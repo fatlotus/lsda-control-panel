@@ -39,6 +39,7 @@ def submit_job():
     """
     
     # TODO(fatlotus): add validation.
+    git_sha1 = request.args.get("sha1", "").encode("ascii")
     
     # Submit this SHA-1 to the backing cluster.
     submit_a_job("jarcher", git_sha1)
