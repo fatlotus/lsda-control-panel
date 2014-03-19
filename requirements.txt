@@ -1,2 +1,3 @@
 Flask>=0.10.1
 kazoo
+GitPython>=0.3.2.RC1
