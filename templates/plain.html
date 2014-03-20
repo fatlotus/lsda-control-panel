@@ -53,11 +53,19 @@
     <tr>
       <th>Worker IP</th>
       <th>State</th>
+      <th>Task ID</th>
+      <th>SHA1</th>
+      <th>Role</th>
+      <th>Owner</th>
     </tr>
     {% for node in nodes %}
     <tr>
       <td>{{ node.ip_address }}</td>
-      <td>{{ node.states[-1] }}</td>
+      <td>{{ node.state.state_stack[-1] }}</td>
+      <td>{{ node.state.task_id }}</td>
+      <td><code>{{ node.state.sha1[:8] }}</code></td>
+      <td>{{ node.state.task_type }}</td>
+      <td>{{ node.state.owner }}</td>
     </tr>
     {% endfor %}
   </table>

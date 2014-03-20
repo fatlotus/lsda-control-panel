@@ -4,7 +4,7 @@
 # Date: 14 December 2013
 #
 
-import pika, uuid, base64, time, re
+import pika, uuid, base64, time, re, json
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
@@ -133,5 +133,5 @@ def list_all_nodes():
     for ip_address in zookeeper.get_children("/nodes"):
         yield dict(
           ip_address = ip_address,
-          states = zookeeper.get("/nodes/{}".format(ip_address))[0].split(":")
+          state = json.loads(zookeeper.get("/nodes/{}".format(ip_address))[0])
         )
