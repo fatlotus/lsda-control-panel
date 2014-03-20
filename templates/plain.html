@@ -49,7 +49,7 @@
   </form>
   {% endif %}
   <table>
-    <tr><th colspan="2">Running workers</th></tr>
+    <tr><th colspan="10">Running workers</th></tr>
     <tr>
       <th>Worker IP</th>
       <th>State</th>
@@ -65,7 +65,7 @@
     {% for node in nodes %}
     <tr>
       <td>{{ node.ip_address }}</td>
-      <td>{{ node.state_stack[-1] }}</td>
+      <td>{{ node.state_symbol }}</td>
       <td>{{ node.task_id }}</td>
       <td><code>{{ node.sha1[:8] }}</code></td>
       <td>{{ node.task_type }}</td>
