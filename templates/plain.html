@@ -58,7 +58,7 @@
       <th>Role</th>
       <th>Owner</th>
       <th>CPU (%)</th>
-      <th>RAM (B)</th>
+      <th>RAM (%)</th>
       <th>Network (B/s) [rx/tx]</th>
       <th>Disk (B/s) [r/w]</th>
     </tr>
@@ -66,14 +66,14 @@
     <tr>
       <td>{{ node.ip_address }}</td>
       <td>{{ node.state_symbol }}</td>
-      <td>{{ node.task_id }}</td>
+      <td><code>{{ node.task_id }}</code></td>
       <td><code>{{ node.sha1[:8] }}</code></td>
       <td>{{ node.task_type }}</td>
       <td>{{ node.owner }}</td>
-      <th>{{ node.cpu_usage }}</th>
-      <th>{{ node.mem_usage }}</th>
-      <th>{{ node.received }} / {{ node.transmitted }}</th>
-      <th>{{ node.read_rate }} / {{ node.write_rate }}</th>
+      <td>{{ "{:%}" | format(node.cpu_usage) }}</td>
+      <td>{{ "{:%}" | format(node.mem_usage) }}</td>
+      <td>{{ node.received }} / {{ node.transmitted }}</td>
+      <td>{{ node.read_rate }} / {{ node.write_rate }}</td>
     </tr>
     {% endfor %}
   </table>
