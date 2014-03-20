@@ -90,7 +90,7 @@
     <tr>
       <td><code>{{ job.sha1[:8] }}</code></td>
       <td>{{ commits_index[job.sha1].message }}</td>
-      {% if job.status == "complete" %}
+      {% if job.status == "complete" or job.status == "running" %}
       <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb"><code>{{ job.task_id }}</code></a></td>
       {% else %}
       <td><code>{{ job.task_id }}</code></td>
