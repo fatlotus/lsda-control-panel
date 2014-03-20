@@ -133,6 +133,9 @@ def list_all_nodes(is_admin, primary_owner):
     for ip_address in zookeeper.get_children("/nodes"):
         state = json.loads(zookeeper.get("/nodes/{}".format(ip_address))[0])
         
+        # Unpack task information.
+        version = state.get("release", "")
+        
         # Unpack application-level state information from this node.
         state_symbol = state.get("state_stack", [ None ])[-1]
         owner = state.get("owner", "-")

@@ -48,7 +48,7 @@
   </form>
   {% endif %}
   <table>
-    <tr><th colspan="12">Running workers</th></tr>
+    <tr><th colspan="13">Running workers</th></tr>
     <tr>
       <th>Worker IP</th>
       <th>State</th>
@@ -60,6 +60,7 @@
       <th>RAM (%)</th>
       <th colspan="2">Network (B/s) [rx/tx]</th>
       <th colspan="2">Disk (B/s) [r/w]</th>
+      <th>Version</th>
     </tr>
     {% for node in nodes %}
     <tr>
@@ -75,6 +76,7 @@
       <td>{{ "{:,.0f}".format(node.transmitted) }}</td>
       <td>{{ "{:,.0f}".format(node.read_rate) }}</td>
       <td>{{ "{:,.0f}".format(node.write_rate) }}</td>
+      <td><code><a href="https://github.com/fatlotus/lsda-management/tree/{{ node.version }}">{{ node.version[:8] }}</a></code></td>
     </tr>
     {% endfor %}
   </table>
