@@ -26,7 +26,7 @@ def main():
         commits = commits,
         commits_index = commits_index,
         jobs = view_jobs_for(owner),
-        nodes = list_all_nodes(),
+        nodes = list_all_nodes(is_admin, owner),
         owners = list_all_owners(),
         owner = owner,
         is_admin = is_admin
