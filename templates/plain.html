@@ -40,7 +40,7 @@
   {% if is_admin %}
   <form method="get">
     <select name="owner" onchange="window.location.href='?owner='+this.value;">
-      <option>blank</option>
+      <option>fake_student</option>
       {% for this_owner in owners %}
       <option {% if this_owner == owner %}
         selected="selected"{% endif %}>{{ this_owner }}</option>
@@ -70,8 +70,8 @@
       <td><code>{{ node.sha1[:8] }}</code></td>
       <td>{{ node.task_type }}</td>
       <td>{{ node.owner }}</td>
-      <td>{{ "{:%}" | format(node.cpu_usage) }}</td>
-      <td>{{ "{:%}" | format(node.mem_usage) }}</td>
+      <td>{{ "{:%}".format(node.cpu_usage) }}</td>
+      <td>{{ "{:%}".format(node.mem_usage) }}</td>
       <td>{{ node.received }} / {{ node.transmitted }}</td>
       <td>{{ node.read_rate }} / {{ node.write_rate }}</td>
     </tr>
