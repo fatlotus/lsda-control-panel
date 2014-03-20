@@ -152,7 +152,7 @@ def list_all_nodes(is_admin, primary_owner):
         read_rate, write_rate = state.get("disk_throughput", [None, None])
         
         # Compute derivative values.
-        cpu_usage = 100 - idle
+        cpu_usage = (100 - idle) / 100
         mem_usage = (mfree + mcached) / mtotal
         
         yield locals()
