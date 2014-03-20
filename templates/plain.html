@@ -57,15 +57,23 @@
       <th>SHA1</th>
       <th>Role</th>
       <th>Owner</th>
+      <th>CPU (%)</th>
+      <th>RAM (B)</th>
+      <th>Network (B/s) [rx/tx]</th>
+      <th>Disk (B/s) [r/w]</th>
     </tr>
     {% for node in nodes %}
     <tr>
       <td>{{ node.ip_address }}</td>
-      <td>{{ node.state.state_stack[-1] }}</td>
-      <td>{{ node.state.task_id }}</td>
-      <td><code>{{ node.state.sha1[:8] }}</code></td>
-      <td>{{ node.state.task_type }}</td>
-      <td>{{ node.state.owner }}</td>
+      <td>{{ node.state_stack[-1] }}</td>
+      <td>{{ node.task_id }}</td>
+      <td><code>{{ node.sha1[:8] }}</code></td>
+      <td>{{ node.task_type }}</td>
+      <td>{{ node.owner }}</td>
+      <th>{{ node.cpu_usage }}</th>
+      <th>{{ node.mem_usage }}</th>
+      <th>{{ node.received }} / {{ node.transmitted }}</th>
+      <th>{{ node.read_rate }} / {{ node.write_rate }}</th>
     </tr>
     {% endfor %}
   </table>

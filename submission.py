@@ -125,13 +125,34 @@ def cancel_a_job(task_id):
     except NodeExistsError:
         pass
 
-def list_all_nodes():
+def list_all_nodes(is_admin, primary_owner):
     """
     Returns a list of connected ZooKeeper nodes.
     """
     
     for ip_address in zookeeper.get_children("/nodes"):
-        yield dict(
-          ip_address = ip_address,
-          state = json.loads(zookeeper.get("/nodes/{}".format(ip_address))[0])
-        )
+        state = json.loads(zookeeper.get("/nodes/{}".format(ip_address))[0])
+        
+        # Unpack application-level state information from this node.
+        state_symbol = state.get("state_stack", [ None ])[-1]
+        owner = state.get("owner")
+        task_type = state.get("task_type")
+        task_id = state.get("task_id")
+        sha1 = state.get("sha1")
+        
+        if not is_admin and owner == primary_owner:
+            continue
+        
+        # Unpack subsystem metrics.
+        idle = state.get("cpu_usage", {}).get("idle", float("NaN"))
+        mactive, mtotal, mcached, mfree, stotal, sfree = (
+          state.get("mem_usage", [float("NaN")] * 7))
+        received = state.get("net_throughput", {}).get("received")
+        transmitted = state.get("net_throughput", {}).get("transmitted")
+        read_rate, write_rate = state.get("disk_throughput", [None, None])
+        
+        # Compute derivative values.
+        cpu_usage = 100 - idle
+        mem_usage = (mfree + mcached) / mtotal
+        
+        yield locals()
