@@ -138,12 +138,12 @@ def list_all_nodes(is_admin, primary_owner):
         
         # Unpack application-level state information from this node.
         state_symbol = state.get("state_stack", [ None ])[-1]
-        owner = state.get("owner", "-")
-        task_type = state.get("task_type", "-")
-        task_id = state.get("task_id", "-")
-        sha1 = state.get("sha1", "-")
+        owner = state.get("owner", "")
+        task_type = state.get("task_type", "")
+        task_id = state.get("task_id", "")
+        sha1 = state.get("sha1", "")
         
-        if not is_admin and owner == primary_owner:
+        if not is_admin and owner and owner != primary_owner:
             continue
         
         # Unpack subsystem metrics.
