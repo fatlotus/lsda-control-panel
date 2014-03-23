@@ -9,7 +9,7 @@ import pika, uuid, base64, time, re, json
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
 
-DEFAULT_CONSTELLATION = ["controller", "engine", "engine", "engine"]
+DEFAULT_CONSTELLATION = ["controller", "engine"]
 
 # Set up the connection to AMQP.
 connection = pika.BlockingConnection(pika.ConnectionParameters(
