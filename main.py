@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/')
 def main():
     owner = request.environ["REMOTE_USER"]
-    is_admin = owner in ("jarcher", "lafferty")
+    is_admin = owner in ("jarcher", "lafferty", "qinqing", "saltern")
     
     if is_admin:
         owner = request.args.get("owner", owner)
@@ -38,11 +38,11 @@ def submit_job():
     Submits a job with the given SHA-1 commit to the backing cluster.
     """
     
-    # TODO(fatlotus): add validation.
+    owner = request.environ["REMOTE_USER"]
     git_sha1 = request.args.get("sha1", "").encode("ascii")
     
     # Submit this SHA-1 to the backing cluster.
-    submit_a_job("jarcher", git_sha1)
+    submit_a_job(owner, git_sha1)
     return redirect("/")
 
 @app.route('/cancel', methods = ["POST"])
