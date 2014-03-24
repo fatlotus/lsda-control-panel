@@ -1,6 +1,19 @@
 import git
+import time
 
 repo = git.Repo("/home/git/repositories/assignment-one.git")
+
+def fetch_stale_commits(cache = {'age': 0, 'value': None}):
+    """
+    Returns a list of all commits on master (those not submitted by the
+    student.)
+    """
+    
+    if time.time() - cache['age'] > 30:
+        cache['value'] = list(repo.heads.master.commit.iter_parents())
+        cache['age'] = time.time()
+    
+    return cache['value']
 
 def fetch_commits(cnetid):
     """
@@ -13,17 +26,24 @@ def fetch_commits(cnetid):
     except IndexError:
         return []
     
-    parents = list(latest.iter_parents()) + [latest]
-    shared_parents = list(repo.heads.master.commit.iter_parents())
+    # Search for the latest commits by that user.
+    parents = []
+    shared_parents = fetch_stale_commits()
+    stack = [latest]
     result = []
+    
+    while len(stack) > 0:
+        head = stack.pop()
+        
+        if head in shared_parents:
+            continue
+        else:
+            parents.append(head)
+        
+        stack.extend(head.parents)
     
     # Transform the commits into a template-friendly object.
     for parent in parents:
-        if parent in shared_parents:
-            continue
-        
-        path_to_check = "results/{}.ipynb".format(parent.hexsha)
-        
         result.append({
           "hexsha": parent.hexsha,
           "committer": parent.committer.name,
