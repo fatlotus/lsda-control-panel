@@ -49,9 +49,20 @@ def view_jobs_for(owner):
     # Fetch the completion status of each job.
     all_jobs = []
     
+    # Sets up all queries for each node.
+    blocks = []
+    
     for task_id in children:
-        # Retrieve job meta-information.
-        data = zookeeper.get('/jobs/{}/{}'.format(owner, task_id))[0].split(":")
+        # Fetch job submission information.
+        blocks.append(zookeeper.get_async('/jobs/{}/{}'.format(owner, task_id)))
+        
+        # Fetch completion status.
+        blocks.append(zookeeper.get_async('/done/{}'.format(task_id)))
+    
+    for task_id, metadata, status in zip(children, blocks[::2], blocks[1::2]):
+        
+        # Retrieve submission information.
+        data = metadata.get()[0].split(":")
         
         if len(data) == 2:
             git_sha1, submitted = data
@@ -59,17 +70,12 @@ def view_jobs_for(owner):
             git_sha1 = data[0]
             submitted = 0
         
+        # Retrieve completion information.
         try:
-            finish_reason = zookeeper.get('/done/{}'.format(task_id))
+            finish_reason = status.get()
         except NoNodeError:
             finish_reason = (None,)
         
-        try:
-            magic_json = zookeeper.get('/controller/{}'.format(task_id))
-        except NoNodeError:
-            magic_json = None
-        
-        # Determine what, exactly, has happened.
         if finish_reason[0] is not None:
             status = finish_reason[0] or "done"
         elif magic_json:
@@ -77,6 +83,7 @@ def view_jobs_for(owner):
         else:
             status = "enqueued"
         
+        # Save this for the template.
         all_jobs.append(dict(
             task_id=task_id,
             sha1=git_sha1,
