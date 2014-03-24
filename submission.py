@@ -156,7 +156,7 @@ def list_all_nodes(is_admin, primary_owner):
         version = state.get("release", "")
         
         # Unpack application-level state information from this node.
-        state_symbol = state.get("state_stack", [ None ])[-1]
+        state_symbol = (state.get("state_stack", None) or [ None ])[-1]
         owner = state.get("owner", "")
         task_type = state.get("task_type", "")
         task_id = state.get("task_id", "")
