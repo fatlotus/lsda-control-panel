@@ -33,7 +33,9 @@ Profiling information:
         /* We're using a standard HTML form here -- it's simple, and fairly
          * effective. */
         
-        var form = document.createElement('form');
+        var body = document.getElementsByTagName('body')[0];
+        
+        var form = document.createElement('form'); body.appendChild(form);
         form.action = this.href;
         form.method = "POST";
         form.submit();
