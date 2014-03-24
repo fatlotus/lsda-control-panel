@@ -11,6 +11,7 @@ from gitrepo import fetch_commits
 from timer import Timer
 
 app = Flask(__name__)
+app.debug = True
 
 @app.route('/')
 def main():
