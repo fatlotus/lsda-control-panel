@@ -58,8 +58,12 @@ def view_jobs_for(owner):
         
         # Fetch completion status.
         blocks.append(zookeeper.get_async('/done/{}'.format(task_id)))
+        
+        # Fetch completion status.
+        blocks.append(zookeeper.exists_async('/controller/{}'.format(task_id)))
     
-    for task_id, metadata, status in zip(children, blocks[::2], blocks[1::2]):
+    for task_id, metadata, status, run_status in zip(children,
+           blocks[::3], blocks[1::3], blocks[2::3]):
         
         # Retrieve submission information.
         data = metadata.get()[0].split(":")
@@ -76,9 +80,15 @@ def view_jobs_for(owner):
         except NoNodeError:
             finish_reason = (None,)
         
+        # Retrieve progress information.
+        try:
+            magic_json_exists = run_status.get()
+        except NoNodeError:
+            magic_json_exists = False
+        
         if finish_reason[0] is not None:
             status = finish_reason[0] or "done"
-        elif magic_json:
+        elif magic_json_exists:
             status = "running"
         else:
             status = "enqueued"
