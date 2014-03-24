@@ -8,28 +8,32 @@ import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
 from submission import list_all_nodes, list_all_owners
 from gitrepo import fetch_commits
+from timer import Timer
 
 app = Flask(__name__)
 
 @app.route('/')
 def main():
+    timer = Timer()
+    
     owner = request.environ["REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "saltern")
     
     if is_admin:
         owner = request.args.get("owner", owner)
     
-    commits = fetch_commits(owner)
+    commits = timer.invoke(fetch_commits, owner)
     commits_index = dict([(x['hexsha'], x) for x in commits])
     
     return render_template("plain.html",
         commits = commits,
         commits_index = commits_index,
-        jobs = view_jobs_for(owner),
-        nodes = list_all_nodes(is_admin, owner),
-        owners = list_all_owners(),
+        jobs = timer.invoke(view_jobs_for, owner),
+        nodes = timer.invoke(list_all_nodes, is_admin, owner),
+        owners = timer.invoke(list_all_owners),
         owner = owner,
-        is_admin = is_admin
+        is_admin = is_admin,
+        times = timer.format()
     )
 
 @app.route('/submit', methods = ["POST"])
