@@ -13,7 +13,7 @@ class Timer(object):
         """
         Initialize this Timer.
         """
-        self.segments = []
+        self.segments = {}
     
     def segment(self, name):
         """
@@ -34,7 +34,7 @@ class Timer(object):
             return inner
         return outer
     
-    def invoke(self, name, function, *vargs, **dargs):
+    def invoke(self, function, *vargs, **dargs):
         """
         Invoke the given function, placing the results in the segments list.
         """
@@ -44,7 +44,7 @@ class Timer(object):
             return function(*vargs, **dargs)
         finally:
             finish = time.time()
-            self.segments[name] = finish - start
+            self.segments[function.__name__] = finish - start
     
     def format(self):
         """
@@ -53,7 +53,7 @@ class Timer(object):
         
         result = []
         
-        for name, time in self.segments:
-            result.append("{:<20s} {>5.3f}s".format(name, time))
+        for name, time in self.segments.items():
+            result.append("{:<20s} {:>5.3f}s".format(name, time))
         
         return "\n".join(result)
