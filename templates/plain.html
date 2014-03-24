@@ -94,6 +94,7 @@ Profiling information:
     <tr><th colspan="5">Recent jobs</th></tr>
     <tr>
       <th>SHA1</th>
+      <th>Date</th>
       <th>Commit Message</th>
       <th>Task ID</th>
       <th>Status</th>
@@ -102,6 +103,7 @@ Profiling information:
     {% for job in jobs %}
     <tr>
       <td><code>{{ job.sha1[:8] }}</code></td>
+      <td>{{ job.submitted }}</td>
       <td>{{ commits_index.get(job.sha1, {"message":"-"}).message }}</td>
       {% if job.status == "complete" or job.status == "running" %}
       <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb"><code>{{ job.task_id }}</code></a></td>
@@ -120,6 +122,7 @@ Profiling information:
     <tr><th colspan="5">Recent commits</th></tr>
     <tr>
       <th>SHA1</th>
+      <th>Date</th>
       <th>Message</th>
       <th>Committer</th>
       <th>Actions</th>
@@ -127,6 +130,7 @@ Profiling information:
     {% for commit in commits %}
     <tr>
       <td><code>{{ commit.hexsha[:8] }}</code></td>
+      <td>{{ commit.date }}</td>
       <td>{{ commit.message }}</td>
       <td><a href="mailto:{{ commit.committer_email }}">
         {{ commit.committer }}</a></td>

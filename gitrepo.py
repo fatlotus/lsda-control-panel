@@ -1,5 +1,4 @@
-import git
-import time
+import git, pytz, time, datetime
 
 repo = git.Repo("/home/git/repositories/assignment-one.git")
 
@@ -48,10 +47,12 @@ def fetch_commits(cnetid):
           "hexsha": parent.hexsha,
           "committer": parent.committer.name,
           "committer_email": parent.committer.email,
-          "date": parent.committed_date,
+          "date": datetime.datetime.fromtimestamp(int(parent.committed_date),
+                    tz=pytz.timezone('US/Central')),
           "message": parent.message
         })
     
-    result.sort(key = lambda x: -x["date"])
+    result.sort(key = lambda x: x["date"])
+    result.reverse()
     
     return result

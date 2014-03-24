@@ -4,7 +4,7 @@
 # Date: 14 December 2013
 #
 
-import pika, uuid, base64, time, re, json
+import pika, uuid, base64, time, re, json, datetime, pytz
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
@@ -98,10 +98,12 @@ def view_jobs_for(owner):
             task_id=task_id,
             sha1=git_sha1,
             status=status,
-            submitted=float(submitted)
+            submitted=datetime.datetime.fromtimestamp(int(float(submitted)),
+                                tz=pytz.timezone('US/Central'))
         ))
     
-    all_jobs.sort(key = lambda x: -x['submitted'])
+    all_jobs.sort(key = lambda x: x['submitted'])
+    all_jobs.reverse()
     
     return all_jobs[:10]
 
