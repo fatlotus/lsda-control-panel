@@ -164,12 +164,14 @@ def list_all_nodes(is_admin, primary_owner):
             continue
         
         # Unpack subsystem metrics.
-        idle = state.get("cpu_usage", {}).get("idle", float("NaN"))
+        NaN = float("NaN")
+        idle = state.get("cpu_usage", {}).get("idle", NaN)
         mactive, mtotal, mcached, mfree, stotal, sfree = (
-          state.get("mem_usage", [float("NaN")] * 6))
-        received = state.get("net_throughput", {}).get("received")
-        transmitted = state.get("net_throughput", {}).get("transmitted")
-        read_rate, write_rate = state.get("disk_throughput", [None, None])
+          state.get("mem_usage", [NaN] * 6))
+        net_stat = state.get("net_throughput", {})
+        received = float(net_stat.get("received", NaN))
+        transmitted = float(net_stat.get("transmitted", NaN))
+        read_rate, write_rate = state.get("disk_throughput", [NaN, NaN])
         
         # Compute derivative values.
         cpu_usage = (100 - idle) / 100
