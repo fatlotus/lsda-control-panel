@@ -105,7 +105,7 @@ def view_jobs_for(owner):
     all_jobs.sort(key = lambda x: x['submitted'])
     all_jobs.reverse()
     
-    return all_jobs[:10]
+    return all_jobs[:20]
 
 def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
     """
