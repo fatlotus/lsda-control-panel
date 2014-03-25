@@ -174,6 +174,7 @@ def list_all_nodes(is_admin, primary_owner):
         received = float(net_stat.get("received", NaN))
         transmitted = float(net_stat.get("transmitted", NaN))
         read_rate, write_rate = state.get("disk_throughput", [NaN, NaN])
+        spindles = state.get("spindles", NaN) / 100
         
         # Compute derivative values.
         cpu_usage = (100 - idle) / 100

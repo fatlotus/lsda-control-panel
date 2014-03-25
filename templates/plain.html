@@ -57,7 +57,7 @@ Profiling information:
   </form>
   {% endif %}
   <table>
-    <tr><th colspan="13">Running workers</th></tr>
+    <tr><th colspan="14">Running workers</th></tr>
     <tr>
       {% if is_admin %}
       <th>Worker IP</th>
@@ -70,6 +70,7 @@ Profiling information:
       <th>Owner</th>
       <th>CPU (%)</th>
       <th>RAM (%)</th>
+      <th>Disk (%)</th>
       <th colspan="2">Network (B/s) [rx/tx]</th>
       <th colspan="2">Disk (IOPS) [r/w]</th>
     </tr>
@@ -87,6 +88,7 @@ Profiling information:
       <td><a href="?owner={{ node.owner }}">{{ node.owner }}</a></td>
       <td>{{ "{:.0%}".format(node.cpu_usage) }}</td>
       <td>{{ "{:.0%}".format(node.mem_usage) }}</td>
+      <td>{{ "{:.0%}".format(node.spindles) }}</td>
       <td>{{ "{:,.0f}".format(node.received) }}</td>
       <td>{{ "{:,.0f}".format(node.transmitted) }}</td>
       <td>{{ "{:,.0f}".format(node.read_rate) }}</td>
