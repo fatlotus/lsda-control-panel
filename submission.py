@@ -149,6 +149,8 @@ def list_all_nodes(is_admin, primary_owner):
     Returns a list of connected ZooKeeper nodes.
     """
     
+    nodes = []
+    
     for ip_address in zookeeper.get_children("/nodes"):
         state = json.loads(zookeeper.get("/nodes/{}".format(ip_address))[0])
         
@@ -180,4 +182,9 @@ def list_all_nodes(is_admin, primary_owner):
         cpu_usage = (100 - idle) / 100
         mem_usage = (mfree + mcached) / mtotal
         
-        yield locals()
+        nodes.append(dict(locals()))
+    
+    nodes.sort(key = lambda x: x['task_id'])
+    nodes.reverse()
+    
+    return nodes
