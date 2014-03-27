@@ -180,7 +180,7 @@ def list_all_nodes(is_admin, primary_owner):
         
         # Compute derivative values.
         cpu_usage = (100 - idle) / 100
-        mem_usage = (mfree + mcached) / mtotal
+        mem_usage = (mfree + mcached) / float(mtotal)
         
         nodes.append(dict(locals()))
     
