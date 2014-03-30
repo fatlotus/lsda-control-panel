@@ -111,7 +111,7 @@ Profiling information:
     </tr>
     {% for job in jobs %}
     <tr>
-      {% if job.status == "complete" or job.status == "running" %}
+      {% if job.status != "enqueued" %}
       <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb?flush_cache=true"><code>{{ job.task_id[:8] }}</code></a></td>
       {% else %}
       <td><code>{{ job.task_id[:8] }}</code></td>
