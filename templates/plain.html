@@ -81,7 +81,7 @@ Profiling information:
         {{ node.ip_address }}</a></td>
       <td><code><a href="https://github.com/fatlotus/lsda-management/tree/{{ node.version }}">{{ node.version[:8] }}</a></code></td>
       {% endif %}
-      <td><code><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{node.task_id}}.ipynb">{{ node.task_id[:8] }}</a></code></td>
+      <td><code><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{node.task_id}}.ipynb?flush_cache=true">{{ node.task_id[:8] }}</a></code></td>
       <td><code>{{ node.sha1[:8] }}</code></td>
       <td>{{ commits_index.get(node.sha1, {"message": "-"}).message }}</td>
       <td>{{ node.task_type }}</td>
@@ -110,7 +110,7 @@ Profiling information:
     {% for job in jobs %}
     <tr>
       {% if job.status == "complete" or job.status == "running" %}
-      <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb"><code>{{ job.task_id[:8] }}</code></a></td>
+      <td><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{job.task_id}}.ipynb?flush_cache=true"><code>{{ job.task_id[:8] }}</code></a></td>
       {% else %}
       <td><code>{{ job.task_id[:8] }}</code></td>
       {% endif %}
