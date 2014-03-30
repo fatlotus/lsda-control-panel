@@ -66,6 +66,7 @@ Profiling information:
       <th>Task ID</th>
       <th>SHA1</th>
       <th>Commit message</th>
+      <th>Flag</th>
       <th>Role</th>
       <th>Owner</th>
       <th>CPU (%)</th>
@@ -84,6 +85,7 @@ Profiling information:
       <td><code><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{node.task_id}}.ipynb?flush_cache=true">{{ node.task_id[:8] }}</a></code></td>
       <td><code>{{ node.sha1[:8] }}</code></td>
       <td>{{ commits_index.get(node.sha1, {"message": "-"}).message }}</td>
+      <td>{{ node.flag }}</td>
       <td>{{ node.task_type }}</td>
       <td><a href="?owner={{ node.owner }}">{{ node.owner }}</a></td>
       <td>{{ "{:.0%}".format(node.cpu_usage) }}</td>

@@ -163,6 +163,7 @@ def list_all_nodes(is_admin, primary_owner):
         task_type = state.get("task_type", "")
         task_id = state.get("task_id", "")
         sha1 = state.get("sha1", "")
+        flag = state.get("flag", "")
         
         if not is_admin and owner and owner != primary_owner:
             continue
