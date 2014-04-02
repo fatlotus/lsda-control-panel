@@ -57,11 +57,17 @@ Profiling information:
   </form>
   {% endif %}
   <table>
-    <tr><th colspan="15">Running workers</th></tr>
+    <tr><th
+      {% if is_admin %}
+        colspan="16"
+      {% else %}
+        colspan="13"
+      {% endif %}>Running workers</th></tr>
     <tr>
       {% if is_admin %}
       <th>Worker IP</th>
       <th>Version</th>
+      <th>Queue</th>
       {% endif %}
       <th>Task ID</th>
       <th>SHA1</th>
@@ -81,6 +87,7 @@ Profiling information:
       <td><a href="ssh://ubuntu@{{ node.ip_address }}">
         {{ node.ip_address }}</a></td>
       <td><code><a href="https://github.com/fatlotus/lsda-management/tree/{{ node.version }}">{{ node.version[:8] }}</a></code></td>
+      <td>{{ node.queue_name }}</td>
       {% endif %}
       <td><code><a href="http://nbviewer.ipython.org/url/ml-submissions.s3-website-us-east-1.amazonaws.com/results/{{node.task_id}}.ipynb?flush_cache=true">{{ node.task_id[:8] }}</a></code></td>
       <td><code>{{ node.sha1[:8] }}</code></td>

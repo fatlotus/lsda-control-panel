@@ -116,6 +116,11 @@ def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
     if not re.match(r'[a-f0-9]{40}', git_sha1):
         return
     
+    # Put Jeremy's tasks in a prerelease job queue.
+    queue_name = 'lsda_tasks'
+    if owner == 'jarcher':
+        queue_name = 'prerelease'
+    
     # Create a new ID for this task.
     task_id = str(uuid.uuid4())
     
@@ -128,7 +133,7 @@ def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
     for job_type in constellation:
         channel.basic_publish(
            exchange = '',
-           routing_key = 'lsda_tasks',
+           routing_key = queue_name,
            body = ':'.join([job_type, owner, task_id, git_sha1])
         )
 
@@ -164,6 +169,7 @@ def list_all_nodes(is_admin, primary_owner):
         task_id = state.get("task_id", "")
         sha1 = state.get("sha1", "")
         flag = state.get("flag", "")
+        queue_name = state.get("queue_name", "")
         
         if not is_admin and owner and owner != primary_owner:
             continue
