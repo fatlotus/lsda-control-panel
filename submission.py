@@ -117,7 +117,7 @@ def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
         return
     
     # Put Jeremy's tasks in a prerelease job queue.
-    queue_name = 'lsda_tasks'
+    queue_name = 'stable'
     if owner == 'jarcher':
         queue_name = 'prerelease'
     
@@ -171,8 +171,13 @@ def list_all_nodes(is_admin, primary_owner):
         flag = state.get("flag", "")
         queue_name = state.get("queue_name", "")
         
-        if not is_admin and owner and owner != primary_owner:
-            continue
+        if not is_admin:
+            if owner:
+                if owner != primary_owner: # Hide non-owned jobs.
+                    continue
+            else:
+                if queue_name != "stable": # Hide prerelease nodes.
+                    continue
         
         # Unpack subsystem metrics.
         NaN = float("NaN")
