@@ -45,9 +45,10 @@ def submit_job():
     
     owner = request.environ["REMOTE_USER"]
     git_sha1 = request.args.get("sha1", "").encode("ascii")
+    queue_name = request.args.get("queue_name", "stable").encode("ascii")
     
     # Submit this SHA-1 to the backing cluster.
-    submit_a_job(owner, git_sha1)
+    submit_a_job(owner, git_sha1, queue_name)
     return redirect("/")
 
 @app.route('/cancel', methods = ["POST"])

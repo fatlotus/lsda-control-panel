@@ -107,7 +107,9 @@ def view_jobs_for(owner):
     
     return all_jobs[:20]
 
-def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
+def submit_a_job(owner, git_sha1, queue_name,
+        constellation = DEFAULT_CONSTELLATION):
+    
     """
     Adds a job into the AMQP processing queue.
     """
@@ -116,10 +118,9 @@ def submit_a_job(owner, git_sha1, constellation = DEFAULT_CONSTELLATION):
     if not re.match(r'[a-f0-9]{40}', git_sha1):
         return
     
-    # Put Jeremy's tasks in a prerelease job queue.
-    queue_name = 'stable'
-    if owner == 'jarcher':
-        queue_name = 'prerelease'
+    # Allow Jeremy to specify custom job queues.
+    if owner != 'jarcher':
+        queue_name = 'stable'
     
     # Create a new ID for this task.
     task_id = str(uuid.uuid4())

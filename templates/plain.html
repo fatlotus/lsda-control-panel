@@ -150,7 +150,12 @@ Profiling information:
       <td>{{ commit.message }}</td>
       <td><a href="mailto:{{ commit.committer_email }}">
         {{ commit.committer }}</a></td>
-      <td><a href="/submit?sha1={{ commit.hexsha }}">submit</a></td>
+      <td><a href="/submit?sha1={{ commit.hexsha }}">submit</a>
+        {% if owner == "jarcher" %}
+        <a href="/submit?sha1={{ commit.hexsha }}&queue_name=prerelease">
+          submit beta</a>
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
   </table>
