@@ -107,7 +107,7 @@ def view_jobs_for(owner):
     
     return all_jobs[:20]
 
-def submit_a_job(owner, git_sha1, queue_name,
+def submit_a_job(owner, git_sha1, queue_name, is_admin,
         constellation = DEFAULT_CONSTELLATION):
     
     """
@@ -118,8 +118,8 @@ def submit_a_job(owner, git_sha1, queue_name,
     if not re.match(r'[a-f0-9]{40}', git_sha1):
         return
     
-    # Allow Jeremy to specify custom job queues.
-    if owner != 'jarcher':
+    # Allow TAs to specify custom job queues.
+    if not is_admin:
         queue_name = 'stable'
     
     # Create a new ID for this task.
