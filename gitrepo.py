@@ -1,6 +1,6 @@
 import git, pytz, time, datetime
 
-repo = git.Repo("/home/git/repositories/assignment-one.git")
+shared_repo = git.Repo("/home/git/repositories/assignment-one.git")
 
 def fetch_stale_commits(cache = {'age': 0, 'value': None}):
     """
@@ -9,7 +9,7 @@ def fetch_stale_commits(cache = {'age': 0, 'value': None}):
     """
     
     if time.time() - cache['age'] > 30:
-        cache['value'] = list(repo.heads.master.commit.iter_parents())
+        cache['value'] = list(shared_repo.heads.master.commit.iter_parents())
         cache['age'] = time.time()
     
     return cache['value']
@@ -19,9 +19,12 @@ def fetch_commits(cnetid):
     Retrieves a list of all commits relevant to the given user.
     """
     
+    # Pull the user-specific repository.
+    my_repo = git.Repo("/home/git/repositories/{}.git".format(cnetid))
+    
     # Look for those unique commits not on master.
     try:
-        latest = repo.heads["submissions/{}/submit".format(cnetid)].commit
+        latest = my_repo.heads["master"].commit
     except IndexError:
         return []
     

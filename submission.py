@@ -107,7 +107,7 @@ def view_jobs_for(owner):
     
     return all_jobs[:20]
 
-def submit_a_job(owner, git_sha1, queue_name, is_admin,
+def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
         constellation = DEFAULT_CONSTELLATION):
     
     """
@@ -122,6 +122,10 @@ def submit_a_job(owner, git_sha1, queue_name, is_admin,
     if not is_admin:
         queue_name = 'stable'
     
+    # Allow TAs to submit from other's repos.
+    if not is_admin:
+        from_user = owner
+    
     # Create a new ID for this task.
     task_id = str(uuid.uuid4())
     
@@ -135,7 +139,13 @@ def submit_a_job(owner, git_sha1, queue_name, is_admin,
         channel.basic_publish(
            exchange = '',
            routing_key = queue_name,
-           body = ':'.join([job_type, owner, task_id, git_sha1])
+           body = json.dumps(dict(
+               kind = job_type,
+               owner = owner,
+               task_id = task_id,
+               from_user = from_user,
+               sha1 = git_sha1
+           ))
         )
 
 def cancel_a_job(task_id):
