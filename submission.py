@@ -201,6 +201,8 @@ def list_all_nodes(is_admin, primary_owner):
         read_rate, write_rate = state.get("disk_throughput", [NaN, NaN])
         spindles = state.get("spindles", NaN) / 100
         
+        disk_usage = 0
+        
         # Compute derivative values.
         cpu_usage = (100 - idle) / 100
         mem_usage = 1 - (mfree + mcached) / float(mtotal)

@@ -59,9 +59,9 @@ Profiling information:
   <table>
     <tr><th
       {% if is_admin %}
-        colspan="16"
+        colspan="17"
       {% else %}
-        colspan="13"
+        colspan="14"
       {% endif %}>Running workers</th></tr>
     <tr>
       {% if is_admin %}
@@ -77,7 +77,8 @@ Profiling information:
       <th>Owner</th>
       <th>CPU (%)</th>
       <th>RAM (%)</th>
-      <th>Disk (%)</th>
+      <th>SSD IO (%)</th>
+      <th>SSD Usage (%)</th>
       <th colspan="2">Network (B/s) [rx/tx]</th>
       <th colspan="2">Disk (IOPS) [r/w]</th>
     </tr>
@@ -98,6 +99,7 @@ Profiling information:
       <td>{{ "{:.0%}".format(node.cpu_usage) }}</td>
       <td>{{ "{:.0%}".format(node.mem_usage) }}</td>
       <td>{{ "{:.0%}".format(node.spindles) }}</td>
+      <td>{{ "{:.0%}".format(node.disk_usage) }}</td>
       <td>{{ "{:,.0f}".format(node.received) }}</td>
       <td>{{ "{:,.0f}".format(node.transmitted) }}</td>
       <td>{{ "{:,.0f}".format(node.read_rate) }}</td>
