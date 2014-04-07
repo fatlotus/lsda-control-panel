@@ -31,7 +31,7 @@ def list_all_owners():
     """
     
     try:
-        return zookeeper.get_children('/jobs')
+        return sorted(zookeeper.get_children('/jobs'))
     except NoNodeError:
         return []
 
