@@ -18,7 +18,7 @@ def main():
     timer = Timer()
     
     owner = request.environ["REMOTE_USER"]
-    is_admin = owner in ("jarcher", "lafferty", "qinqing", "saltern")
+    is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     
     if is_admin:
         owner = request.args.get("owner", owner)
@@ -44,7 +44,7 @@ def submit_job():
     """
     
     owner = request.environ["REMOTE_USER"]
-    is_admin = owner in ("jarcher", "lafferty", "qinqing", "saltern")
+    is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     
     if not is_admin:
         from_user = owner
