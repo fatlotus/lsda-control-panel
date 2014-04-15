@@ -68,11 +68,15 @@ def view_jobs_for(owner):
         # Retrieve submission information.
         data = metadata.get()[0].split(":")
         
-        if len(data) == 2:
+        if len(data) == 3:
+            git_sha1, submitted, file_name = data
+        elif len(data) == 2:
             git_sha1, submitted = data
+            file_name = "main.ipynb"
         else:
             git_sha1 = data[0]
             submitted = 0
+            file_name = "main.ipynb"
         
         # Retrieve completion information.
         try:
@@ -98,6 +102,7 @@ def view_jobs_for(owner):
             task_id=task_id,
             sha1=git_sha1,
             status=status,
+            file_name=file_name,
             submitted=datetime.datetime.fromtimestamp(int(float(submitted)),
                                 tz=pytz.timezone('US/Central'))
         ))
@@ -108,7 +113,7 @@ def view_jobs_for(owner):
     return all_jobs[:20]
 
 def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
-        constellation = DEFAULT_CONSTELLATION):
+        file_name = "main.ipynb", constellation = DEFAULT_CONSTELLATION):
     
     """
     Adds a job into the AMQP processing queue.
@@ -131,7 +136,7 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
     
     # Save the task into ZooKeeper.
     zookeeper.create("/jobs/{}/{}".format(owner, task_id),
-      value = ":".join([git_sha1.encode("ascii"), str(time.time())]),
+      value = ":".join([git_sha1.encode("ascii"), str(time.time()), file_name]),
       makepath = True)
     
     # Publish the task on the channel.
@@ -144,7 +149,8 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
                owner = owner,
                task_id = task_id,
                from_user = from_user,
-               sha1 = git_sha1
+               sha1 = git_sha1,
+               file_name = file_name,
            ))
         )
 

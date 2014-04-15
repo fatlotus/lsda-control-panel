@@ -114,6 +114,7 @@ Profiling information:
       <th>Task ID</th>
       <th>Date</th>
       <th>SHA1</th>
+      <th>File Name</th>
       <th>Commit Message</th>
       <th>Status</th>
       <th>Actions</th>
@@ -127,6 +128,7 @@ Profiling information:
       {% endif %}
       <td>{{ job.submitted }}</td>
       <td><code>{{ job.sha1[:8] }}</code></td>
+      <th><code>{{ job.file_name }}</code></th>
       <td>{{ commits_index.get(job.sha1, {"message":"-"}).message }}</td>
       <td>{{ job.status }}</td>
       <td>{% if job.status == "enqueued" or job.status == "running" %}
