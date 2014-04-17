@@ -29,6 +29,11 @@ Profiling information:
       if (x.getAttribute("href")[0] != '/')
         continue;
       
+      /* Filter out links to pages without side-effects. */
+      var action = x.getAttribute("href").split("?")[0];
+      if (action != "/submit" && action != "/cancel")
+        continue;
+      
       x.onclick = function() {
         /* We're using a standard HTML form here -- it's simple, and fairly
          * effective. */
