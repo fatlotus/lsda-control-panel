@@ -136,7 +136,8 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
     
     # Save the task into ZooKeeper.
     zookeeper.create("/jobs/{}/{}".format(owner, task_id),
-      value = ":".join([git_sha1.encode("ascii"), str(time.time()), file_name]),
+      value = ":".join([git_sha1.encode("ascii"), str(time.time()),
+                        file_name.encode("ascii")]),
       makepath = True)
     
     # Publish the task on the channel.
