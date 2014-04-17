@@ -37,6 +37,14 @@ def main():
         times = timer.format()
     )
 
+@app.route('/render')
+def render_page():
+    """
+    Renders a blank page, to avoid scaring the students.
+    """
+
+    return ""
+
 @app.route('/submit', methods = ["POST"])
 def submit_job():
     """
