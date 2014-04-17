@@ -61,9 +61,10 @@ def submit_job():
     
     git_sha1 = request.args.get("sha1", "")
     queue_name = request.args.get("queue_name", "stable")
+    file_name = request.args.get("file_name", "main.ipynb")
     
     # Submit this SHA-1 to the backing cluster.
-    submit_a_job(owner, from_user, git_sha1, queue_name, is_admin)
+    submit_a_job(owner, from_user, git_sha1, queue_name, is_admin, file_name)
     return redirect("/")
 
 @app.route('/cancel', methods = ["POST"])
