@@ -1,4 +1,4 @@
-import git, pytz, time, datetime
+import git, pytz, time, datetime, re
 
 shared_repo = git.Repo("/home/git/repositories/assignment-one.git")
 
@@ -33,15 +33,19 @@ def fetch_commits(cnetid):
     shared_parents = fetch_stale_commits()
     stack = [latest]
     result = []
+    visited = set()
     
     while len(stack) > 0:
         head = stack.pop()
         
         if head in shared_parents:
             continue
+        elif head in visited:
+            continue
         else:
             parents.append(head)
         
+        visited.add(head)
         stack.extend(head.parents)
     
     # Transform the commits into a template-friendly object.
@@ -52,10 +56,37 @@ def fetch_commits(cnetid):
           "committer_email": parent.committer.email,
           "date": datetime.datetime.fromtimestamp(int(parent.committed_date),
                     tz=pytz.timezone('US/Central')),
-          "message": parent.message
+          "message": parent.message,
+          "short_message": parent.message.split("\n")[0]
         })
     
     result.sort(key = lambda x: x["date"])
     result.reverse()
     
     return result
+
+def notebook_from_commit(cnetid, commit, path):
+    """
+    Returns the notebook, as a string, for the given path in the given
+    repository.
+    """
+
+    # Fetch the repository object for this person.
+    my_repo = git.Repo("/home/git/repositories/{}.git".format(cnetid))
+
+    # Validate the commit to view.
+    if not re.match(r'[a-f0-9]{40}', commit):
+        return
+
+    # Retrieve the commit, with guards.
+    commit = my_repo.commit(commit)
+    if not commit:
+        return
+
+    # Fetch the blob, with guards.
+    blob = commit.tree[path]
+    if not blob:
+        return
+
+    # Ensure that the result is valid JSON.
+    return blob.data_stream.read()

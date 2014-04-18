@@ -4,7 +4,7 @@
 # Date: 14 December 2013
 #
 
-import pika, uuid, base64, time, re, json, datetime, pytz
+import pika, uuid, base64, time, re, json, datetime, pytz, boto
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
@@ -166,6 +166,19 @@ def cancel_a_job(task_id):
           makepath = True)
     except NodeExistsError:
         pass
+
+def notebook_from_task(task_id):
+    """
+    Returns the notebook for the given task as a string.
+    """
+
+    bucket = boto.connect_s3().get_bucket("ml-submissions")
+    key = bucket.get_key(task_id + ".ipynb")
+
+    if key is None:
+        return None
+
+    return key.get_contents_as_string()
 
 def list_all_nodes(is_admin, primary_owner):
     """

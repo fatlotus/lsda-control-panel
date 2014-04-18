@@ -7,7 +7,8 @@ import threading
 import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
 from submission import list_all_nodes, list_all_owners
-from gitrepo import fetch_commits
+from gitrepo import fetch_commits, notebook_from_commit
+from ipython import render_to_html, render_control_box
 from timer import Timer
 
 app = Flask(__name__)
@@ -40,10 +41,32 @@ def main():
 @app.route('/render')
 def render_page():
     """
-    Renders a blank page, to avoid scaring the students.
+    Renders the IPython notebook from a commit.
     """
 
-    return ""
+    owner = request.environ["REMOTE_USER"]
+    is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
+
+    sha1 = request.args.get("sha1", "")
+    file_name = request.args.get("file_name", "")
+
+    notebook = notebook_from_commit(owner, sha1, file_name)
+
+    if not notebook:
+        return
+
+    options = []
+    
+    for commit in fetch_commits(owner):
+        options.append((
+          commit["hexsha"],        # link target
+          commit["short_message"], # readable label
+          commit["hexsha"] == sha1 # selection status
+        ))
+
+        options.append((commit["hexsha"], "  First run.", False))
+
+    return render_to_html(notebook) + render_control_box(options)
 
 @app.route('/submit', methods = ["POST"])
 def submit_job():
