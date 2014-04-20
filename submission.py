@@ -113,7 +113,7 @@ def view_jobs_for(owner):
     return all_jobs[:20]
 
 def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
-        file_name = "main.ipynb", constellation = DEFAULT_CONSTELLATION):
+        file_name = "main.ipynb", number_of_workers = 1):
     
     """
     Adds a job into the AMQP processing queue.
@@ -140,6 +140,9 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
                         file_name.encode("ascii")]),
       makepath = True)
     
+    # Generate a cluster shape for this task.
+    constellation = ["controller"] + (["engine"] * number_of_workers)
+    
     # Publish the task on the channel.
     for job_type in constellation:
         channel.basic_publish(
@@ -152,6 +155,7 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
                from_user = from_user,
                sha1 = git_sha1,
                file_name = file_name,
+               number_of_workers = number_of_workers,
            ))
         )
 
