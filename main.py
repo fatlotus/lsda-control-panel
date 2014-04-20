@@ -88,7 +88,7 @@ def submit_job():
     
     # Submit this SHA-1 to the backing cluster.
     submit_a_job(owner, from_user, git_sha1, queue_name, is_admin, file_name)
-    return redirect("/")
+    return redirect(request.referrer or "/")
 
 @app.route('/cancel', methods = ["POST"])
 def cancel_job():
