@@ -196,7 +196,9 @@ def list_all_nodes(is_admin, primary_owner):
         version = state.get("release", "")
         
         # Unpack application-level state information from this node.
-        task = state.get("task", {})
+        task = state.get("task")
+        if type(task) is not dict:
+            task = {}
         state_symbol = (state.get("state_stack", None) or [ None ])[-1]
         owner = task.get("owner", "")
         task_type = task.get("task_type", "")
