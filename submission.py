@@ -9,8 +9,6 @@ import pika, uuid, base64, time, re, json, datetime, pytz, boto
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
 
-DEFAULT_CONSTELLATION = ["controller", "engine"]
-
 # Set up the connection to AMQP.
 connection = pika.BlockingConnection(pika.ConnectionParameters(
   'amqp.lsda.cs.uchicago.edu'))
@@ -198,13 +196,14 @@ def list_all_nodes(is_admin, primary_owner):
         version = state.get("release", "")
         
         # Unpack application-level state information from this node.
+        task = state.get("task", {})
         state_symbol = (state.get("state_stack", None) or [ None ])[-1]
-        owner = state.get("owner", "")
-        task_type = state.get("task_type", "")
-        task_id = state.get("task_id", "")
-        sha1 = state.get("sha1", "")
+        owner = task.get("owner", "")
+        task_type = task.get("task_type", "")
+        task_id = task.get("task_id", "")
+        sha1 = task.get("sha1", "")
         flag = state.get("flag", "")
-        queue_name = state.get("queue_name", "")
+        queue_name = task.get("queue_name", "")
         
         if not is_admin:
             if owner:
