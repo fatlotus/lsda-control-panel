@@ -205,7 +205,7 @@ def list_all_nodes(is_admin, primary_owner):
         task_id = task.get("task_id", "")
         sha1 = task.get("sha1", "")
         flag = state.get("flag", "")
-        queue_name = task.get("queue_name", "")
+        queue_name = state.get("queue_name", "")
         
         if not is_admin:
             if owner:
