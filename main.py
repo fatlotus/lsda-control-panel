@@ -6,9 +6,10 @@ import functools
 import threading
 import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
-from submission import list_all_nodes, list_all_owners
+from submission import list_all_nodes, list_all_owners, tasks_for_file
+from submission import notebook_from_task
 from gitrepo import fetch_commits, notebook_from_commit
-from ipython import render_to_html, render_control_box
+from ipython import render_to_html, python_to_notebook
 from timer import Timer
 
 app = Flask(__name__)
@@ -44,6 +45,7 @@ def render_page():
     Renders the IPython notebook from a commit.
     """
 
+    # Retrieve request parameters.
     owner = request.environ["REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     from_user = request.args.get("repo", "")[:-4]
@@ -53,24 +55,55 @@ def render_page():
 
     sha1 = request.args.get("sha1", "")
     file_name = request.args.get("file_name", "")
+    target = request.args.get("target", "latest")
 
-    notebook = notebook_from_commit(from_user, sha1, file_name)
+    # Fetch the list of tasks for this file.
+    tasks = list(tasks_for_file(from_user, file_name))
 
-    if not notebook:
-        return
+    # If we're undecided, pick the latest task available.
+    if target == "latest":
+        if len(tasks) > 0:
+            target = max(tasks, key = lambda x: x[2])[0]
+        else:
+            target = ""
 
+    if target == "":
+        
+        # Fetch the notebook from Git.
+        notebook = notebook_from_commit(from_user, sha1, file_name)
+
+        if file_name.endswith(".py"):
+            notebook = python_to_notebook(notebook)
+
+    else:
+        
+        # Fetch the notebook from S3.
+        notebook = notebook_from_task(target)
+
+    # Build a <select> for the UI.
     options = []
-    
-    for commit in fetch_commits(owner):
-        options.append((
-          commit["hexsha"],        # link target
-          commit["short_message"], # readable label
-          commit["hexsha"] == sha1 # selection status
+
+    tasks.sort(key = lambda x: x[2])
+    tasks.reverse()
+
+    for task_id, owner, submitted_on in tasks:
+        options.append(dict(
+            label = "Run on {:%Y-%m-%d %H:%M:%S} by {}".format(
+              submitted_on, owner),
+            target = task_id,
+            selected = (task_id == target)
         ))
 
-        options.append((commit["hexsha"], "  First run.", False))
+    options.append(dict(
+        label = "Latest Git version",
+        target = "",
+        selected = (target == "")
+    ))
 
-    return render_to_html(notebook) + render_control_box(options)
+    # Render the result.
+    notebook_html = render_to_html(notebook)
+    
+    return render_template("notebook.html", **locals())
 
 @app.route('/submit', methods = ["POST"])
 def submit_job():

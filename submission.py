@@ -4,7 +4,7 @@
 # Date: 14 December 2013
 #
 
-import pika, uuid, base64, time, re, json, datetime, pytz, boto
+import pika, uuid, base64, time, re, json, datetime, pytz, boto, hashlib
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
@@ -140,9 +140,10 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
     
     # Index this task by filename.
     hashed_name = hashlib.sha1(
-      json.dumps(from_user, file_name)).hexdigest()
+      json.dumps([from_user, file_name])).hexdigest()
     
-    zookeeper.create("/byfile/{}/{}-{}".format(hashed_name, task_id, owner),
+    zookeeper.create("/byfile/{}/{}_{}_{}".
+        format(hashed_name, task_id, owner, time.time()),
       value = "", makepath = True)
     
     # Generate a cluster shape for this task.
@@ -164,6 +165,28 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
            ))
         )
 
+def tasks_for_file(from_user, file_name):
+    """
+    Returns a list of all tasks for the given file.
+    """
+
+    hashed_name = hashlib.sha1(
+      json.dumps([from_user, file_name])).hexdigest()
+
+    try:
+        for child in zookeeper.get_children("/byfile/" + hashed_name):
+            if not "_" in child:
+                continue
+
+            task_id, owner, submitted_on = child.split("_", 2)
+
+            yield (task_id, owner,
+              datetime.datetime.fromtimestamp(float(submitted_on),
+                tz=pytz.timezone('US/Central')))
+
+    except NoNodeError:
+        pass
+
 def cancel_a_job(task_id):
     """
     Marks a job as done, interrupting whatever worker is executing it.
@@ -182,7 +205,7 @@ def notebook_from_task(task_id):
     """
 
     bucket = boto.connect_s3().get_bucket("ml-submissions")
-    key = bucket.get_key(task_id + ".ipynb")
+    key = bucket.get_key("results/" + task_id + ".ipynb")
 
     if key is None:
         return None

@@ -1,0 +1,51 @@
+{% if notebook %}
+  {{ notebook_html.replace("\nselect", "\n").replace("\nlabel,select,button{", "\n")|safe }}
+{% else %}
+  <p class="waiting">(this frame unintentionally left blank)</p> 
+{% endif %}
+<div class="top-bar">
+  <select onchange="window.location.href = this.value;" style="native">
+    {% for option in options %}
+      <option value="?repo={{ from_user }}.git&sha1={{ sha1 }}&file_name={{ file_name }}&target={{ option.target }}"{% if option.selected %}
+      selected="selected"
+      {% endif %}>{{ option.label }}</option>
+    {% endfor %}
+  </select>
+</div>
+<style type="text/css">
+  #notebook-container {
+    width: auto;
+  }
+  
+  body {
+    padding-top: 50px;
+  }
+
+  .waiting {
+    font: 2em/3em sans-serif;
+    text-align:center;
+    color: #ccc;
+  }
+
+  .top-bar {
+    height: 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fe9;
+    padding: 0.5em;
+    font: 0.9em/20px sans-serif;
+    height: 20px;
+  }
+  
+  .top-bar select {
+    width: auto;
+  }
+</style>
+<script type="text/javascript">
+  window.onload = function() {
+    window.parent.document.getElementsByTagName("iframe")[0].height = (
+      document.body.scrollHeight);
+  }
+</script>
