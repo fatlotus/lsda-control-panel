@@ -46,11 +46,15 @@ def render_page():
 
     owner = request.environ["REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
+    from_user = request.args.get("repo", "")[:-4]
+
+    if not is_admin:
+        from_user = owner
 
     sha1 = request.args.get("sha1", "")
     file_name = request.args.get("file_name", "")
 
-    notebook = notebook_from_commit(owner, sha1, file_name)
+    notebook = notebook_from_commit(from_user, sha1, file_name)
 
     if not notebook:
         return
