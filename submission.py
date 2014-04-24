@@ -239,7 +239,7 @@ def notebook_from_task(task_id):
 
     return key.get_contents_as_string()
 
-def list_all_nodes(is_admin, primary_owner):
+def list_all_nodes(is_admin, primary_owner, for_task = None):
     """
     Returns a list of connected ZooKeeper nodes.
     """
@@ -258,13 +258,17 @@ def list_all_nodes(is_admin, primary_owner):
             task = {}
         state_symbol = (state.get("state_stack", None) or [ None ])[-1]
         owner = task.get("owner", "")
-        task_type = task.get("task_type", "")
+        task_type = task.get("kind", "")
         task_id = task.get("task_id", "")
         sha1 = task.get("sha1", "")
         flag = state.get("flag", "")
         queue_name = state.get("queue_name", "")
         
-        if not is_admin:
+        if for_task:
+            if task_id != for_task:
+                continue
+        
+        elif not is_admin:
             if owner:
                 if owner != primary_owner: # Hide non-owned jobs.
                     continue

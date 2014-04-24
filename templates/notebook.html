@@ -3,6 +3,13 @@
 {% else %}
   <p class="waiting">(this frame unintentionally left blank)</p> 
 {% endif %}
+{% if status == "running" or status == "enqueued" %}
+<script type="text/javascript">
+  setTimeout(function() {
+    window.location.reload();
+  }, 5000);
+</script>
+{% endif %}
 <div class="top-bar lsda-{{ status }}">
   <select onchange="window.location.href = this.value;" style="native">
     {% for option in options %}
@@ -13,13 +20,41 @@
   </select>
   <span class="status">{{ info or status }}</span>
 </div>
+{% if nodes %}
+  <table class="nodes">
+    <tr>
+      <th>Flag</th>
+      <th>Role</th>
+      <th>CPU (%)</th>
+      <th>RAM (%)</th>
+      <th>SSD IO (%)</th>
+      <th>SSD Usage (%)</th>
+      <th colspan="2">Network (B/s) [rx/tx]</th>
+      <th colspan="2">Disk (IOPS) [r/w]</th>
+    </tr>
+    {% for node in nodes %}
+    <tr>
+      <td><code>{{ node.flag }}</code></td>
+      <td><code>{{ node.task_type }}</code></td>
+      <td>{{ "{:.0%}".format(node.cpu_usage) }}</td>
+      <td>{{ "{:.0%}".format(node.mem_usage) }}</td>
+      <td>{{ "{:.0%}".format(node.spindles) }}</td>
+      <td>{{ "{:.0%}".format(node.disk_usage) }}</td>
+      <td>{{ "{:,.0f}".format(node.received) }}</td>
+      <td>{{ "{:,.0f}".format(node.transmitted) }}</td>
+      <td>{{ "{:,.0f}".format(node.read_rate) }}</td>
+      <td>{{ "{:,.0f}".format(node.write_rate) }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endif %}
 <style type="text/css">
   #notebook-container {
     width: auto;
   }
   
   body {
-    padding-top: 50px;
+    padding-top: {{ offset }}px;
   }
 
   .waiting {
@@ -29,15 +64,43 @@
   }
 
   .top-bar {
-    height: 40px;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     background-color: #fe9;
-    padding: 0.5em;
-    font: 0.9em/20px sans-serif;
+    padding: 5px;
+    font: 13px/20px sans-serif;
     height: 20px;
+  }
+  
+  .nodes {
+    position: fixed;
+    top: 30px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .nodes code {
+    background-color: transparent;
+    border: none;
+    font: 12px Monaco,monospace;
+  }
+  
+  .nodes td, .nodes th {
+    font: 14px sans-serif;
+    border: 1px solid #eee !important;
+    padding: 5px;
+  }
+  
+  .nodes code {
+    
+  }
+  
+  .nodes th {
+    font-weight: bold;
   }
   
   .top-bar .status {

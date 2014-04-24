@@ -76,12 +76,19 @@ def render_page():
             notebook = python_to_notebook(notebook)
 
         status, info = "stored", None
+        nodes = []
 
     else:
         
         # Fetch the notebook from S3.
         notebook = notebook_from_task(target)
-        status, info = get_job_status(target) 
+        status, info = get_job_status(target)
+        
+        # Retrieve the list of nodes for this task.
+        nodes = list_all_nodes(None, None, target)
+
+    # Compute styling fixes.
+    offset = (len(nodes) + 2) * 30
 
     # Build a <select> for the UI.
     options = []
