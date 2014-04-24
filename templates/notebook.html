@@ -3,7 +3,7 @@
 {% else %}
   <p class="waiting">(this frame unintentionally left blank)</p> 
 {% endif %}
-<div class="top-bar">
+<div class="top-bar lsda-{{ status }}">
   <select onchange="window.location.href = this.value;" style="native">
     {% for option in options %}
       <option value="?repo={{ from_user }}.git&sha1={{ sha1 }}&file_name={{ file_name }}&target={{ option.target }}"{% if option.selected %}
@@ -11,6 +11,7 @@
       {% endif %}>{{ option.label }}</option>
     {% endfor %}
   </select>
+  <span class="status">{{ info or status }}</span>
 </div>
 <style type="text/css">
   #notebook-container {
@@ -37,6 +38,29 @@
     padding: 0.5em;
     font: 0.9em/20px sans-serif;
     height: 20px;
+  }
+  
+  .top-bar .status {
+    float: right;
+    font: bold 15px sans-serif;
+    text-transform: uppercase;
+    line-height: 20px;
+    opacity: 0.5;
+    padding-right: 5px;
+  }
+  
+  .top-bar.lsda-success {
+    background-color: #4c4;
+    border-top: 1px solid #3a3;
+  }
+  
+  .top-bar.lsda-failure {
+    background-color: #f55;
+    border-top: 1px solid #833;
+  }
+  
+  .top-bar.lsda-stored {
+    background-color: #f8f8f8;
   }
   
   .top-bar select {

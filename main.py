@@ -7,7 +7,7 @@ import threading
 import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
 from submission import list_all_nodes, list_all_owners, tasks_for_file
-from submission import notebook_from_task
+from submission import notebook_from_task, get_job_status
 from gitrepo import fetch_commits, notebook_from_commit
 from ipython import render_to_html, python_to_notebook
 from timer import Timer
@@ -75,10 +75,13 @@ def render_page():
         if file_name.endswith(".py"):
             notebook = python_to_notebook(notebook)
 
+        status, info = "stored", None
+
     else:
         
         # Fetch the notebook from S3.
         notebook = notebook_from_task(target)
+        status, info = get_job_status(target) 
 
     # Build a <select> for the UI.
     options = []

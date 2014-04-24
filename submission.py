@@ -110,6 +110,33 @@ def view_jobs_for(owner):
     
     return all_jobs[:20]
 
+def get_job_status(task_id):
+    """
+    Returns the exit status of the given task.
+    """
+
+    # Fetch completion status.
+    try:
+        finish_reason = zookeeper.get('/done/{}'.format(task_id))[0]
+    except NoNodeError:
+        finish_reason = None
+    
+    # Fetch execution status.
+    is_running = zookeeper.exists('/controller/{}'.format(task_id))
+    
+    # Return the proper job status tuple.
+    if finish_reason:
+        if finish_reason == "exit 0":
+            return ("success", finish_reason)
+        else:
+            return ("failure", finish_reason)
+    
+    elif is_running:
+        return ("running", None)
+    
+    else:
+        return ("enqueued", None)
+
 def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
         file_name = "main.ipynb", number_of_workers = 1):
     
