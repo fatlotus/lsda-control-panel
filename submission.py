@@ -138,6 +138,13 @@ def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
                         file_name.encode("ascii")]),
       makepath = True)
     
+    # Index this task by filename.
+    hashed_name = hashlib.sha1(
+      json.dumps(from_user, file_name)).hexdigest()
+    
+    zookeeper.create("/byfile/{}/{}-{}".format(hashed_name, task_id, owner),
+      value = "", makepath = True)
+    
     # Generate a cluster shape for this task.
     constellation = ["controller"] + (["engine"] * number_of_workers)
     
