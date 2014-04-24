@@ -80,11 +80,7 @@ def submit_job():
     
     owner = request.environ["REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
-    
-    if not is_admin:
-        from_user = owner
-    else:
-        from_user = request.args.get("submitter", owner)
+    from_user = request.args.get("repo", "")[:-4]
     
     git_sha1 = request.args.get("sha1", "")
     queue_name = request.args.get("queue_name", "stable")
