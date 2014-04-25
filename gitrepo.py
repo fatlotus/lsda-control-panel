@@ -103,6 +103,7 @@ def prepare_submission(cnetid, sha1):
     with tempfile.TemporaryFile() as fp:
         # Generate a zip archive for this submission.
         my_repo.archive(fp, sha1, format = "zip")
+        fp.seek(0)
 
         # Upload the archive to the S3.
         key = bucket.new_key("submissions/{}/{}.zip".format(cnetid, sha1))
