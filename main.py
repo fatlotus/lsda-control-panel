@@ -25,8 +25,8 @@ def main():
     if is_admin:
         owner = request.args.get("owner", owner)
     
-    commits = timer.invoke(fetch_commits, owner)
-    commits_index = dict([(x['hexsha'], x) for x in commits])
+    commits = [] # timer.invoke(fetch_commits, owner)
+    commits_index = {} # dict([(x['hexsha'], x) for x in commits])
     
     return render_template("plain.html",
         commits = commits,
