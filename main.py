@@ -31,7 +31,7 @@ def main():
     return render_template("plain.html",
         commits = commits,
         commits_index = commits_index,
-        jobs = [],
+        jobs = view_jobs_for(owner),
         nodes = timer.invoke(list_all_nodes, is_admin, owner),
         owners = timer.invoke(list_all_owners),
         owner = owner,
@@ -141,7 +141,7 @@ def cancel_job():
     
     task_id = request.args.get("task_id", "").encode("ascii")
     cancel_a_job(task_id)
-    return redirect("/")
+    return redirect(request.referrer or "/")
 
 if __name__ == "__main__":
     app.run(debug=True)
