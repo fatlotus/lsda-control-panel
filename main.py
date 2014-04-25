@@ -31,7 +31,7 @@ def main():
     return render_template("plain.html",
         commits = commits,
         commits_index = commits_index,
-        jobs = timer.invoke(view_jobs_for, owner),
+        jobs = [],
         nodes = timer.invoke(list_all_nodes, is_admin, owner),
         owners = timer.invoke(list_all_owners),
         owner = owner,
