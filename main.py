@@ -8,7 +8,7 @@ import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
 from submission import list_all_nodes, list_all_owners, tasks_for_file
 from submission import notebook_from_task, get_job_status
-from gitrepo import fetch_commits, notebook_from_commit
+from gitrepo import fetch_commits, notebook_from_commit, prepare_submission
 from ipython import render_to_html, python_to_notebook
 from timer import Timer
 
@@ -128,6 +128,9 @@ def submit_job():
     git_sha1 = request.args.get("sha1", "")
     queue_name = request.args.get("queue_name", "stable")
     file_name = request.args.get("file_name", "main.ipynb")
+    
+    # Upload this commit to S3.
+    prepare_submission(from_user, git_sha1)
     
     # Submit this SHA-1 to the backing cluster.
     submit_a_job(owner, from_user, git_sha1, queue_name, is_admin, file_name)

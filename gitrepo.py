@@ -1,4 +1,4 @@
-import git, pytz, time, datetime, re
+import git, pytz, time, datetime, re, tempfile, boto
 
 shared_repo = git.Repo("/home/git/repositories/assignment-one.git")
 
@@ -90,3 +90,20 @@ def notebook_from_commit(cnetid, commit, path):
 
     # Ensure that the result is valid JSON.
     return blob.data_stream.read()
+
+def prepare_submission(cnetid, sha1):
+    """
+    Uploads a ZIP archive to S3.
+    """
+
+    # Read the repo and connect to S3.
+    my_repo = git.Repo("/home/git/repositories/{}.git".format(cnetid))
+    bucket = boto.connect_s3().get_bucket("ml-checkpoints")
+
+    with tempfile.TemporaryFile() as fp:
+        # Generate a zip archive for this submission.
+        my_repo.archive(fp, sha1, format = "zip")
+
+        # Upload the archive to the S3.
+        key = bucket.new_key("submissions/{}/{}.zip".format(cnetid, sha1))
+        key.set_contents_from_file(fp)
