@@ -39,6 +39,10 @@ def render_to_html(json_as_string):
     import os
     os.environ["HOME"] = "/home/git"
 
+    # Return if not yet ready.
+    if not json_as_string:
+        return
+
     # Attempt to read a cached value.
     key = hashlib.sha1(json_as_string).hexdigest()
     try:
