@@ -19,7 +19,7 @@ app.debug = True
 def main():
     timer = Timer()
     
-    owner = request.environ["REMOTE_USER"]
+    owner = request.environ["HTTP_REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     
     if is_admin:
@@ -46,7 +46,7 @@ def render_page():
     """
 
     # Retrieve request parameters.
-    owner = request.environ["REMOTE_USER"]
+    owner = request.environ["HTTP_REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     from_user = request.args.get("repo", "")[:-4]
 
@@ -121,7 +121,7 @@ def submit_job():
     Submits a job with the given SHA-1 commit to the backing cluster.
     """
     
-    owner = request.environ["REMOTE_USER"]
+    owner = request.environ["HTTP_REMOTE_USER"]
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     from_user = request.args.get("repo", "")[:-4]
     
