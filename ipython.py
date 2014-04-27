@@ -1,6 +1,13 @@
 from IPython.nbformat.current import reads_json
 from IPython.nbconvert.exporters import HTMLExporter
 import json
+import hashlib
+import pylibmc
+import traceback
+import logging
+
+connection = pylibmc.Client([
+    "notebook-cache.l0s8m9.0001.use1.cache.amazonaws.com"])
 
 def python_to_notebook(source_code):
     """
@@ -32,6 +39,19 @@ def render_to_html(json_as_string):
     import os
     os.environ["HOME"] = "/home/git"
 
+    # Attempt to read a cached value.
+    key = hashlib.sha1(json_as_string).hexdigest()
+    try:
+        value = connection.get(key)
+
+    except Exception:
+        logging.exception("Unable to read fragment.")
+
+    else:
+        if value:
+            return value
+
+    # Render the notebook.
     exporter = HTMLExporter()
     try:
         notebook_node = reads_json(json_as_string)
@@ -39,5 +59,11 @@ def render_to_html(json_as_string):
         return None
 
     html, _ = exporter.from_notebook_node(notebook_node)
+
+    # Saved the cached value.
+    try:
+        connection.set(key, html)
+    except Exception:
+        logging.exception("Unable to cache fragment.")
 
     return html
