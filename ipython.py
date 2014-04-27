@@ -26,8 +26,11 @@ def python_to_notebook(source_code):
 
 def render_to_html(json_as_string):
     """
-    Renders the given Notebook note as HTML.
+    Renders the given Notebook node as HTML.
     """
+
+    import os
+    os.environ["HOME"] = "/home/git"
 
     exporter = HTMLExporter()
     try:
