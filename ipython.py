@@ -54,6 +54,8 @@ def render_to_html(json_as_string):
     else:
         if value:
             return value
+        else:
+            logging.info("Missed read in cache.")
 
     # Render the notebook.
     exporter = HTMLExporter()
