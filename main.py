@@ -11,6 +11,9 @@ from submission import notebook_from_task, get_job_status
 from gitrepo import fetch_commits, notebook_from_commit, prepare_submission
 from ipython import render_to_html, python_to_notebook
 from timer import Timer
+import logging
+
+logging.basicConfig(level = logging.INFO)
 
 app = Flask(__name__)
 app.debug = True
