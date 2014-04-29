@@ -6,7 +6,7 @@ import memcache
 import traceback
 import logging
 
-connection = memcahe.Client([
+connection = memcache.Client([
     "notebook-cache.l0s8m9.0001.use1.cache.amazonaws.com"])
 
 def python_to_notebook(source_code):
