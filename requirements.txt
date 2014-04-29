@@ -4,4 +4,4 @@ GitPython>=0.3.2.RC1
 pytz
 IPython
 pygments
-pylibmc
+python-memcached

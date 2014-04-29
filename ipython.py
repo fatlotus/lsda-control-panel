@@ -2,11 +2,11 @@ from IPython.nbformat.current import reads_json
 from IPython.nbconvert.exporters import HTMLExporter
 import json
 import hashlib
-import pylibmc
+import memcache
 import traceback
 import logging
 
-connection = pylibmc.Client([
+connection = memcahe.Client([
     "notebook-cache.l0s8m9.0001.use1.cache.amazonaws.com"])
 
 def python_to_notebook(source_code):
