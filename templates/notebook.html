@@ -18,7 +18,7 @@
       {% endif %}>{{ option.label }}</option>
     {% endfor %}
   </select>
-  <form class="status" action="/cancel?task_id={{ task_id }}" method="post">
+  <form class="status" action="/cancel?task_id={{ target }}" method="post">
     {% if (status != "success") and (status != "failure") and (status != "stored") %}
       <input type="submit" value="Cancel"/>
     {% endif %}
