@@ -289,6 +289,7 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
         sha1 = task.get("sha1", "")
         flag = state.get("flag", "")
         queue_name = state.get("queue_name", "")
+        file_name = state.get("file_name", "")
         
         if for_task:
             if task_id != for_task:
@@ -325,3 +326,18 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
     nodes.reverse()
     
     return nodes
+
+def get_tasks_for_user(cnetid):
+    """
+    Returns a list of files that have tasks associated with them.
+    If there are multiple tasks for a file, that file is listed
+    multiple times.
+    """
+    
+    file_names = {}
+    
+    for node in list_all_nodes(False, cnetid):
+        if node["task_id"]:
+            file_names[node["task_id"]] = node["file_name"]
+    
+    return sorted(file_names.items())
