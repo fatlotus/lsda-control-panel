@@ -14,11 +14,19 @@ from gitrepo import fetch_commits, notebook_from_commit, prepare_submission
 from ipython import render_to_html, python_to_notebook
 from timer import Timer
 import logging
+import datetime
+import pytz
 
 logging.basicConfig(level = logging.INFO)
 
 app = Flask(__name__)
 app.debug = True
+
+def format_date(seconds):
+    return datetime.datetime.fromtimestamp(seconds,
+               tz=pytz.timezone('US/Central'))
+
+app.jinja_env.globals.update(format_date = format_date)
 
 @app.route('/')
 def main():
@@ -36,7 +44,7 @@ def main():
     return render_template("plain.html",
         commits = commits,
         commits_index = commits_index,
-        jobs = view_jobs_for(owner),
+        jobs = timer.invoke(view_jobs_for, owner),
         nodes = timer.invoke(list_all_nodes, is_admin, owner),
         owners = timer.invoke(list_all_owners),
         owner = owner,

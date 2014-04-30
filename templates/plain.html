@@ -138,7 +138,7 @@ Profiling information:
       {% else %}
       <td><code>{{ job.task_id[:8] }}</code></td>
       {% endif %}
-      <td>{{ job.submitted }}</td>
+      <td>{{ format_date(job.submitted) }}</td>
       <td><code>{{ job.sha1[:8] }}</code></td>
       <th><code>{{ job.file_name }}</code></th>
       <td>{{ commits_index.get(job.sha1, {"message":"-"}).message }}</td>
@@ -150,32 +150,5 @@ Profiling information:
     </tr>
     {% endfor %}
   </table>
-  <!--
-  <table>
-    <tr><th colspan="5">Recent commits</th></tr>
-    <tr>
-      <th>SHA1</th>
-      <th>Date</th>
-      <th>Message</th>
-      <th>Committer</th>
-      <th>Actions</th>
-    </tr>
-    {% for commit in commits %}
-    <tr>
-      <td><code>{{ commit.hexsha[:8] }}</code></td>
-      <td>{{ commit.date }}</td>
-      <td>{{ commit.message }}</td>
-      <td><a href="mailto:{{ commit.committer_email }}">
-        {{ commit.committer }}</a></td>
-      <td><a href="/submit?sha1={{ commit.hexsha }}">submit</a>
-        {% if is_admin %}
-        <a href="/submit?sha1={{ commit.hexsha }}&queue_name=prerelease">
-          submit beta</a>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  -->
 </body>
 </html>

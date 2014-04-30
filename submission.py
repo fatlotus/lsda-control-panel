@@ -5,6 +5,7 @@
 #
 
 import pika, uuid, base64, time, re, json, datetime, pytz, boto, hashlib
+import memcache, logging
 
 from kazoo.client import KazooClient
 from kazoo.exceptions import KazooException, NoNodeError, NodeExistsError
@@ -22,6 +23,10 @@ zookeeper = KazooClient(
 )
 
 zookeeper.start()
+
+# Set up the connection to memcached.
+connection = memcache.Client([
+    "notebook-cache.l0s8m9.0001.use1.cache.amazonaws.com"])
 
 def list_all_owners():
     """
@@ -43,6 +48,20 @@ def view_jobs_for(owner):
         children = zookeeper.get_children('/jobs/{}'.format(owner))
     except NoNodeError:
         children = []
+    
+    # Retrieve the next cache key.
+    key = hashlib.sha1(json.dumps(sorted(children))).hexdigest()
+    
+    try:
+        result = connection.get(key)
+    except Exception:
+        logging.exception("Unable to retreive item from cache.")
+    else:
+        if result:
+            logging.info("Cache HIT.")
+            return json.loads(result)
+        else:
+            logging.info("Cache MISS.")
     
     # Fetch the completion status of each job.
     all_jobs = []
@@ -101,14 +120,21 @@ def view_jobs_for(owner):
             sha1=git_sha1,
             status=status,
             file_name=file_name,
-            submitted=datetime.datetime.fromtimestamp(int(float(submitted)),
-                                tz=pytz.timezone('US/Central'))
+            submitted=int(float(submitted))
         ))
     
     all_jobs.sort(key = lambda x: x['submitted'])
     all_jobs.reverse()
     
-    return all_jobs[:20]
+    all_jobs[20:] = []
+    
+    # Save the resulting value in the cache.
+    try:
+        connection.set(key, json.dumps(all_jobs))
+    except Exception:
+        logging.exception("Unable to save item into cache.")
+    
+    return all_jobs
 
 def get_job_status(task_id):
     """
