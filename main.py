@@ -18,6 +18,7 @@ import datetime
 import pytz
 
 logging.basicConfig(level = logging.INFO)
+logging.getLogger('kazoo.client').setLevel(level = logging.WARN)
 
 app = Flask(__name__)
 app.debug = True
