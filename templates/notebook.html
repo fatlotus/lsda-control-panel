@@ -1,5 +1,5 @@
 {% if notebook %}
-  {{ notebook_html.replace("\nselect", "\n").replace("\nlabel,select,button{", "\n")|safe }}
+  {{ (notebook_html or "").replace("\nselect", "\n").replace("\nlabel,select,button{", "\n")|safe }}
 {% else %}
   <p class="waiting">(this frame unintentionally left blank)</p> 
 {% endif %}
