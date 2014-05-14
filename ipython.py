@@ -52,6 +52,8 @@ def render_to_html(json_as_string):
     key = hashlib.sha1(json_as_string).hexdigest()
     try:
         value = connection.get(key)
+        if type(value) not in (str, unicode):
+            raise ValueError("Invalid cache response.")
 
     except Exception:
         logging.exception("Unable to read fragment.")
