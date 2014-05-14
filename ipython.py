@@ -61,7 +61,7 @@ def render_to_html(json_as_string):
     else:
         if value:
             logging.info("Cache HIT.")
-            return value
+            return value.decode("utf-8")
         else:
             logging.info("Cache MISS.")
 
@@ -74,7 +74,7 @@ def render_to_html(json_as_string):
                stdout = subprocess.PIPE)
 
     logging.info("About to render externally.")
-    html = process.communicate(json_as_string)[0]
+    html = process.communicate(json_as_string)[0].decode("utf-8")
     logging.info("Rendering complete.")
 
     if html == "":
@@ -94,7 +94,7 @@ def main():
     """
 
     exporter = HTMLExporter()
-    json_as_string = sys.stdin.read()
+    json_as_string = sys.stdin.read().decode("utf-8")
 
     try:
         notebook_node = reads_json(json_as_string)
@@ -103,11 +103,11 @@ def main():
     
     html, _ = exporter.from_notebook_node(notebook_node)
     
-    sys.stderr.write("JSON was {} byte(s); html is {} byte(s).\n".format(
+    sys.stderr.write("JSON was {:,} byte(s); html is {:,} byte(s).\n".format(
         len(json_as_string), len(html)
     ))
     
-    sys.stdout.write(html)
+    sys.stdout.write(html.encode("utf-8"))
     sys.stderr.flush()
     sys.stdout.flush()
 

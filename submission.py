@@ -51,6 +51,7 @@ def view_jobs_for(owner):
     
     # Retrieve the next cache key.
     key = hashlib.sha1(json.dumps(sorted(children))).hexdigest()
+    key += "-{}".format(int(time.time() / 300))
     
     try:
         result = connection.get(key)

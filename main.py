@@ -127,6 +127,8 @@ def render_page():
     # Render the result.
     notebook_html = render_to_html(notebook)
     
+    logging.info('Notebook_html: {}'.format(type(notebook_html)))
+    
     return render_template("notebook.html", **locals())
 
 @app.route('/submit', methods = ["POST"])
