@@ -165,7 +165,7 @@ def get_job_status(task_id):
         return ("enqueued", None)
 
 def submit_a_job(owner, from_user, git_sha1, queue_name, is_admin,
-        file_name = "main.ipynb", number_of_workers = 0):
+        file_name = "main.ipynb", number_of_workers = 1):
     
     """
     Adds a job into the AMQP processing queue.
