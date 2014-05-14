@@ -1,4 +1,4 @@
-from gevent import monkey; monkey.patch_all()
+from gevent import monkey; monkey.patch_all(subprocess = True)
 
 from flask import Flask, jsonify, render_template, request, redirect
 from boto.ec2.cloudwatch import CloudWatchConnection
