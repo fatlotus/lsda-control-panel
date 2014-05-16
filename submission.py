@@ -291,6 +291,7 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
         flag = state.get("flag", "")
         queue_name = state.get("queue_name", "")
         file_name = state.get("file_name", "")
+        from_user = task.get("from_user", "")
         
         if for_task:
             if task_id != for_task:
@@ -328,7 +329,7 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
     
     return nodes
 
-def get_tasks_for_user(cnetid):
+def get_tasks_for_user(cnetid, is_admin):
     """
     Returns a list of files that have tasks associated with them.
     If there are multiple tasks for a file, that file is listed
@@ -337,8 +338,9 @@ def get_tasks_for_user(cnetid):
     
     file_names = {}
     
-    for node in list_all_nodes(False, cnetid):
+    for node in list_all_nodes(is_admin, cnetid):
         if node["task_id"]:
-            file_names[node["task_id"]] = node["file_name"]
+            file_names[node["from_user"], node["task_id"]] = \
+              (node["sha1"], node["file_name"])
     
     return sorted(file_names.items())

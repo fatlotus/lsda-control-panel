@@ -9,13 +9,14 @@ import threading
 import time
 from submission import view_jobs_for, submit_a_job, cancel_a_job
 from submission import list_all_nodes, list_all_owners, tasks_for_file
-from submission import notebook_from_task, get_job_status
+from submission import notebook_from_task, get_job_status, get_tasks_for_user
 from gitrepo import fetch_commits, notebook_from_commit, prepare_submission
 from ipython import render_to_html, python_to_notebook
 from timer import Timer
 import logging
 import datetime
 import pytz
+import json
 
 logging.basicConfig(level = logging.INFO)
 logging.getLogger('kazoo.client').setLevel(level = logging.WARN)
@@ -161,6 +162,31 @@ def cancel_job():
     task_id = request.args.get("task_id", "").encode("ascii")
     cancel_a_job(task_id)
     return redirect(request.referrer or "/")
+
+@app.route('/all_jobs.js', methods=["GET"])
+def all_jobs():
+    """
+    Return a JavaScript file that produces a table containing the given file.
+    """
+    
+    owner = request.environ["HTTP_REMOTE_USER"]
+    is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
+    
+    data = get_tasks_for_user(owner, is_admin)
+    return (
+        "(function(data){"
+            "var c=document.getElementById('tasks');"
+            "for(var i=0;i<data.length;i++){"
+                "var l=document.createElement('a');"
+                "l.setAttribute('href','/gitlist/'+data[i][0]+'.git/blob/'+"
+                  "data[i][2]+'/'+data[i][3]);"
+                "l.innerText=data[i][0]+'/'+data[i][3];"
+                "c.appendChild(l);"
+            "};"
+            "c.setAttribute('class', 'visible')"
+        "})"
+        "(##JSON##)"
+    ).replace("##JSON##", json.dumps(data))
 
 if __name__ == "__main__":
     app.run(debug=True)
