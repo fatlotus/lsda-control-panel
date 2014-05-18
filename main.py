@@ -1,6 +1,6 @@
 from gevent import monkey; monkey.patch_all(subprocess = True)
 
-from flask import Flask, jsonify, render_template, request, redirect
+from flask import Flask, jsonify, render_template, request, redirect, Response
 from boto.ec2.cloudwatch import CloudWatchConnection
 import datetime
 import git
@@ -173,20 +173,20 @@ def all_jobs():
     is_admin = owner in ("jarcher", "lafferty", "qinqing", "nseltzer")
     
     data = get_tasks_for_user(owner, is_admin)
-    return (
+    return Response((
         "(function(data){"
             "var c=document.getElementById('tasks');"
             "for(var i=0;i<data.length;i++){"
                 "var l=document.createElement('a');"
-                "l.setAttribute('href','/gitlist/'+data[i][0]+'.git/blob/'+"
-                  "data[i][2]+'/'+data[i][3]);"
-                "l.innerText=data[i][0]+'/'+data[i][3];"
+                "l.setAttribute('href','/gitlist/'+data[i][0][0]+'.git/blob/'+"
+                  "data[i][1][0]+'/'+data[i][1][1]);"
+                "l.innerText=data[i][0][0]+'/'+data[i][1][1];"
                 "c.appendChild(l);"
             "};"
             "c.setAttribute('class', 'visible')"
         "})"
         "(##JSON##)"
-    ).replace("##JSON##", json.dumps(data))
+    ).replace("##JSON##", json.dumps(data)), mimetype='text/javascript')
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -290,7 +290,7 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
         sha1 = task.get("sha1", "")
         flag = state.get("flag", "")
         queue_name = state.get("queue_name", "")
-        file_name = state.get("file_name", "")
+        file_name = task.get("file_name", "")
         from_user = task.get("from_user", "")
         
         if for_task:
