@@ -153,7 +153,7 @@ def get_job_status(task_id):
     
     # Return the proper job status tuple.
     if finish_reason:
-        if finish_reason == "exit 0":
+        if finish_reason.startswith("exit 0"):
             return ("success", finish_reason)
         else:
             return ("failure", finish_reason)
