@@ -324,7 +324,7 @@ def list_all_nodes(is_admin, primary_owner, for_task = None):
         
         nodes.append(dict(locals()))
     
-    nodes.sort(key = lambda x: x['task_id'])
+    nodes.sort(key = lambda x: (x['task_id'], x['task_type']))
     nodes.reverse()
     
     return nodes
